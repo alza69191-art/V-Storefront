@@ -1,0 +1,17 @@
+"use client";
+import {useEffect,useMemo,useState} from "react";
+type Product={id:number;title:string;price:number;currency:string;stock:number};
+type CartLine=Product&{quantity:number};
+export default function OrderCart({products,apiBase}:{products:Product[];apiBase:string}){
+ const [items,setItems]=useState<CartLine[]>([]),[expanded,setExpanded]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
+ const base=apiBase.replace(/\/$/,"");
+ useEffect(()=>{try{const saved=localStorage.getItem("v-commerce-cart");if(saved)setItems(JSON.parse(saved));}catch{}},[]);
+ useEffect(()=>{try{localStorage.setItem("v-commerce-cart",JSON.stringify(items));}catch{}},[items]);
+ useEffect(()=>{const add=(event:Event)=>{const p=(event as CustomEvent<Product>).detail;if(!p?.id)return;setItems(old=>{const found=old.find(x=>x.id===p.id);if(found)return old.map(x=>x.id===p.id?{...x,quantity:Math.min(50,x.quantity+1)}:x);return [...old,{...p,quantity:1}];});setMessage("");};window.addEventListener("v-commerce:add",add);return()=>window.removeEventListener("v-commerce:add",add);},[]);
+ const count=items.reduce((n,x)=>n+x.quantity,0);
+ const currency=items[0]?.currency||"USD";
+ const total=useMemo(()=>items.reduce((n,x)=>n+Number(x.price)*x.quantity,0),[items]);
+ function quantity(id:number,delta:number){setItems(old=>old.map(x=>x.id===id?{...x,quantity:Math.max(0,Math.min(50,x.quantity+delta))}:x).filter(x=>x.quantity>0));}
+ async function checkout(){setBusy(true);setMessage("");try{const r=await fetch(base+"/api/orders",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({items:items.map(x=>({productId:x.id,quantity:x.quantity}))})});const data=await r.json();if(!r.ok){setMessage(r.status===401?"سجّل الدخول أولاً من زر «حسابي» أعلى الصفحة.":data.error||"تعذر إنشاء الطلب.");return;}setItems([]);setMessage("تم استلام الطلب "+data.order.orderNumber+" — الإجمالي "+Number(data.order.total).toFixed(2)+" "+data.order.currency+". الطلب غير مدفوع وينتظر تأكيد المتجر.");}catch{setMessage("تعذر الاتصال بالخادم. حاول مرة أخرى.");}finally{setBusy(false);}}
+ return <><button className="cartFloating" onClick={()=>setExpanded(!expanded)}>السلة ({count}) · {total.toFixed(2)} {currency}</button>{expanded&&<div className="cartLayer" onClick={()=>setExpanded(false)}><section className="cartPanel" onClick={e=>e.stopPropagation()}><button className="cartClose" onClick={()=>setExpanded(false)}>×</button><h2>سلة المشتريات</h2>{items.length?items.map(item=><div className="cartLine" key={item.id}><div><b>{item.title}</b><small>{Number(item.price).toFixed(2)} {item.currency}</small></div><div className="cartQty"><button onClick={()=>quantity(item.id,-1)}>−</button><span>{item.quantity}</span><button disabled={item.quantity>=item.stock} onClick={()=>quantity(item.id,1)}>+</button></div></div>):<p>السلة فارغة. أضف المنتجات التي تريد طلبها.</p>}{items.length>0&&<><div className="cartTotal"><b>الإجمالي التقديري</b><strong>{total.toFixed(2)} {currency}</strong></div><p className="cartNotice">إرسال الطلب لا يعني الدفع. سيصل إلى المتجر للمراجعة والتأكيد، ولا توجد عملية تحصيل إلكتروني حالياً.</p><button className="cartCheckout" disabled={busy} onClick={checkout}>{busy?"جارٍ إرسال الطلب...":"إرسال طلب الشراء"}</button></>}{message&&<p className="cartMessage" role="status">{message}</p>}</section></div>}</>;
+}
