@@ -1,0 +1,1 @@
+import "./globals.css";export const metadata={title:"V Store — تسوّق بأسلوبك",description:"متجر V الإلكتروني"};export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="ar" dir="rtl"><body>{children}</body></html>}
