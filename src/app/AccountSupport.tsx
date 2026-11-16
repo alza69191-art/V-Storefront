@@ -5,7 +5,7 @@ export default function AccountSupport({apiBase}:{apiBase:string}){const [user,s
 const base=apiBase.replace(/\/$/,"");
 async function refresh(){try{const r=await fetch(base+"/api/customer/auth",{credentials:"include"});const x=await r.json();setUser(x.user);if(x.user){const t=await fetch(base+"/api/support",{credentials:"include"});if(t.ok)setTickets(await t.json());}}catch{}}
 useEffect(()=>{refresh();const timer=setInterval(refresh,30000);return()=>clearInterval(timer);},[]);
-const unread=useMemo(()=>tickets.reduce((n,t)=>n+t.messages.filter(m=>m.sender_type==="admin").length,0),[tickets]);
+
 async function auth(e:React.FormEvent){e.preventDefault();setError("");const r=await fetch(base+"/api/customer/auth",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:mode,name,email,password})});const x=await r.json();if(!r.ok){setError(x.error||"تعذر تسجيل الدخول");return;}setUser(x.user);setPassword("");await refresh();}
 async function logout(){await fetch(base+"/api/customer/auth",{method:"DELETE",credentials:"include"});setUser(null);setTickets([]);setUnread(0);}
 async function createTicket(e:React.FormEvent){e.preventDefault();const r=await fetch(base+"/api/support",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({subject,body})});if(r.ok){setSubject("");setBody("");await refresh();setError("");}else setError("سجّل الدخول أولاً لإرسال رسالة الدعم");}
