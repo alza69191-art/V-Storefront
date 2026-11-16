@@ -26,7 +26,7 @@ export default function AccountSupport({apiBase,initialOpen=false}:{apiBase:stri
  async function refresh(){
   try{
    const r=await fetch(base+"/api/customer/auth",{credentials:"include",cache:"no-store"});const x=await r.json();setUser(x.user);
-   if(x.user){setUsername(x.user.username||"");setBio(x.user.bio||"");setSkills(Array.isArray(x.user.skills)?x.user.skills.join("، "):"");const [n,o]=await Promise.all([fetch(base+"/api/support/notifications",{credentials:"include"}),fetch(base+"/api/orders",{credentials:"include"})]);if(n.ok)setUnread((await n.json()).count||0);if(o.ok)setOrders(await o.json());if(open){const t=await fetch(base+"/api/support",{credentials:"include"});if(t.ok){setTickets(await t.json());setUnread(0);}}}
+   if(x.user){setAccountType(x.user.account_type||x.user.accountType||"buyer");setUsername(x.user.username||"");setBio(x.user.bio||"");setSkills(Array.isArray(x.user.skills)?x.user.skills.join("، "):"");const [n,o]=await Promise.all([fetch(base+"/api/support/notifications",{credentials:"include"}),fetch(base+"/api/orders",{credentials:"include"})]);if(n.ok)setUnread((await n.json()).count||0);if(o.ok)setOrders(await o.json());if(open){const t=await fetch(base+"/api/support",{credentials:"include"});if(t.ok){setTickets(await t.json());setUnread(0);}}}
    else{setTickets([]);setOrders([]);setUnread(0);}
   }catch{}
  }
