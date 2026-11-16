@@ -20,6 +20,7 @@ function Turnstile({onToken}:{onToken:(token:string)=>void}){
 export default function AccountSupport({apiBase,initialOpen=false}:{apiBase:string;initialOpen?:boolean}){
  const [user,setUser]=useState<any>(null),[open,setOpen]=useState(initialOpen),[mode,setMode]=useState<"login"|"register"|"verify">("login"),[name,setName]=useState(""),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[code,setCode]=useState(""),[accountType,setAccountType]=useState("buyer"),[error,setError]=useState(""),[tickets,setTickets]=useState<Ticket[]>([]),[orders,setOrders]=useState<CustomerOrder[]>([]),[unread,setUnread]=useState(0),[subject,setSubject]=useState(""),[body,setBody]=useState(""),[active,setActive]=useState<number|null>(null),[reply,setReply]=useState(""),[turnstileToken,setTurnstileToken]=useState(""),[username,setUsername]=useState(""),[bio,setBio]=useState(""),[skills,setSkills]=useState("");
  const base=apiBase.replace(/\/$/,"");
+ const onTurnstileToken=useCallback((token:string)=>setTurnstileToken(token),[]);
  async function refresh(){
   try{
    const r=await fetch(base+"/api/customer/auth",{credentials:"include",cache:"no-store"});const x=await r.json();setUser(x.user);
@@ -32,7 +33,8 @@ export default function AccountSupport({apiBase,initialOpen=false}:{apiBase:stri
   e.preventDefault();setError("");
   const r=await fetch(base+"/api/customer/auth",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:mode,name,email,password,accountType,turnstileToken})});
   const x=await r.json().catch(()=>({}));
-  setTurnstileToken("");\n  if(!r.ok){setError(x.error||"تعذر تسجيل الدخول");return;}
+  setTurnstileToken("");
+  if(!r.ok){setError(x.error||"تعذر تسجيل الدخول");return;}
   if(x.requiresVerification){setMode("verify");setPassword("");setError("أرسلنا رمز التأكيد إلى بريدك. أدخله لإكمال إنشاء الحساب.");return;}
   setUser(x.user);setPassword("");setOpen(true);await refresh();
  }
@@ -40,7 +42,8 @@ export default function AccountSupport({apiBase,initialOpen=false}:{apiBase:stri
   e.preventDefault();setError("");
   const r=await fetch(base+"/api/customer/auth/verify",{method:"POST",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,code,turnstileToken})});
   const x=await r.json().catch(()=>({}));
-  setTurnstileToken("");\n  if(!r.ok){setError(x.error||"تعذر تأكيد البريد");return;}
+  setTurnstileToken("");
+  if(!r.ok){setError(x.error||"تعذر تأكيد البريد");return;}
   setUser(x.user);setMode("login");setCode("");setOpen(true);await refresh();
  }
  async function saveProfile(e:React.FormEvent){
