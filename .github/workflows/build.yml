@@ -1,0 +1,29 @@
+name: Build
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/freelance-platform-foundation]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install
+      - run: npm run build
+        env:
+          NODE_ENV: production
+          DB_HOST: 127.0.0.1
+          DB_PORT: "4000"
+          DB_USER: ci
+          DB_PASSWORD: ci-placeholder
+          DB_NAME: ci
+          DB_SSL: "false"
+          SESSION_SECRET: ci-placeholder-session-secret-at-least-32-chars
+          RESEND_API_KEY: ci-placeholder
+          RESEND_FROM_EMAIL: ci@example.invalid
+          TURNSTILE_SECRET_KEY: ci-placeholder
