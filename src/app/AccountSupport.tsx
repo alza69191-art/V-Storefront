@@ -1,8 +1,8 @@
 "use client";
 import {useEffect,useState} from "react";
 type Ticket={id:number;subject:string;status:string;messages:{id:number;sender_type:string;body:string;created_at:string}[]};
-export default function AccountSupport({apiBase}:{apiBase:string}){
- const [user,setUser]=useState<any>(null),[open,setOpen]=useState(false),[mode,setMode]=useState<"login"|"register">("login"),[name,setName]=useState(""),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[error,setError]=useState(""),[tickets,setTickets]=useState<Ticket[]>([]),[unread,setUnread]=useState(0),[subject,setSubject]=useState(""),[body,setBody]=useState(""),[active,setActive]=useState<number|null>(null),[reply,setReply]=useState("");
+export default function AccountSupport({apiBase,initialOpen=false}:{apiBase:string;initialOpen?:boolean}){
+ const [user,setUser]=useState<any>(null),[open,setOpen]=useState(initialOpen),[mode,setMode]=useState<"login"|"register">("login"),[name,setName]=useState(""),[email,setEmail]=useState(""),[password,setPassword]=useState(""),[error,setError]=useState(""),[tickets,setTickets]=useState<Ticket[]>([]),[unread,setUnread]=useState(0),[subject,setSubject]=useState(""),[body,setBody]=useState(""),[active,setActive]=useState<number|null>(null),[reply,setReply]=useState("");
  const base=apiBase.replace(/\/$/,"");
  async function refresh(){
   try{
