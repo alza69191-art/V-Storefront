@@ -1,0 +1,2 @@
+import {NextRequest,NextResponse} from "next/server";
+export async function POST(req:NextRequest){const base=process.env.ADMIN_API_URL;if(!base)return NextResponse.json({error:"service_unavailable"},{status:503});try{const body=await req.json();const r=await fetch(base+"/api/public/submissions",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),cache:"no-store"});return NextResponse.json(await r.json(),{status:r.status});}catch{return NextResponse.json({error:"service_unavailable"},{status:503});}}
