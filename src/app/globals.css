@@ -18,3 +18,5 @@
 @media(max-width:390px){.welcomeActions{grid-template-columns:1fr}}
 
 .sellerPage{max-width:1000px;margin:40px auto;padding:28px;background:#fff;border:1px solid #e8eaf2;border-radius:18px}
+
+.accountPanel select{display:block;width:100%;padding:13px;border:1px solid #e0e3ed;border-radius:10px;margin:10px 0;background:#fff;color:#171a30;font:inherit}.accountPanel .cf-turnstile{max-width:100%;overflow:hidden}
