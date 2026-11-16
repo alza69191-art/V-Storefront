@@ -7,7 +7,7 @@ export default function OrderCart({products,apiBase}:{products:Product[];apiBase
  const base=apiBase.replace(/\/$/,"");
  useEffect(()=>{try{const saved=localStorage.getItem("v-commerce-cart");if(saved)setItems(JSON.parse(saved));}catch{}},[]);
  useEffect(()=>{try{localStorage.setItem("v-commerce-cart",JSON.stringify(items));}catch{}},[items]);
- useEffect(()=>{const add=(event:Event)=>{const p=(event as CustomEvent<Product>).detail;if(!p?.id)return;setItems(old=>{const found=old.find(x=>x.id===p.id);if(found)return old.map(x=>x.id===p.id?{...x,quantity:Math.min(50,x.quantity+1)}:x);return [...old,{...p,quantity:1}];});setMessage("");};window.addEventListener("v-commerce:add",add);return()=>window.removeEventListener("v-commerce:add",add);},[]);
+ useEffect(()=>{const add=(event:Event)=>{const p=(event as CustomEvent<Product>).detail;if(!p?.id)return;if(items.length&&String(items[0].currency||"USD").toUpperCase()!==String(p.currency||"USD").toUpperCase()){setMessage("لا يمكن جمع منتجات بعملات مختلفة في طلب واحد.");return;}const existing=items.find(x=>x.id===p.id);if(existing&&existing.quantity>=Number(p.stock)){setMessage("وصلت إلى الحد المتاح من هذا المنتج.");return;}setItems(old=>{const found=old.find(x=>x.id===p.id);if(found)return old.map(x=>x.id===p.id?{...x,quantity:Math.min(Number(p.stock),found.quantity+1)}:x);return [...old,{...p,quantity:1}];});setMessage("");};window.addEventListener("v-commerce:add",add);return()=>window.removeEventListener("v-commerce:add",add);},[items]);
  const count=items.reduce((n,x)=>n+x.quantity,0);
  const currency=items[0]?.currency||"USD";
  const total=useMemo(()=>items.reduce((n,x)=>n+Number(x.price)*x.quantity,0),[items]);
