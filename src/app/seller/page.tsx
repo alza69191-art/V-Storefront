@@ -1,0 +1,5 @@
+import SellerForm from "../SellerForm";
+import StoreNav from "../StoreNav";
+export const dynamic="force-dynamic";
+async function getConfig(){try{const r=await fetch((process.env.ADMIN_API_URL||"https://v-admin-api.onrender.com")+"/api/public/config",{cache:"no-store"});return r.ok?await r.json():{};}catch{return {};}}
+export default async function SellerPage(){const c=await getConfig();const style:any={"--primary":c.primary||"#5424d8","--secondary":c.secondary||"#1767e8","--page":c.background||"#f7f8fc","--ink":c.text||"#15182b",backgroundImage:c.backgroundImage?"url("+c.backgroundImage+")":undefined,backgroundSize:"cover",backgroundAttachment:"fixed"};return <main className="store storeFrame" style={style}><StoreNav config={c} active="seller"/><section className="storeContent subPage"><section className="aboutStore"><small>بوابة البائعين</small><h1>إرسال منتج للمراجعة</h1><p>تصل بيانات المنتج إلى الإدارة، ولا يظهر في المتجر إلا بعد الموافقة.</p>{c.allowCustomerSubmissions?<SellerForm/>:<p>استقبال طلبات البائعين متوقف حالياً من لوحة الإدارة.</p>}</section></section></main>;}
