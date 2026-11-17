@@ -9,3 +9,8 @@
 
 ## حالة الميزات
 هذه نقطة انطلاق عملية للواجهة الرئيسية والكتالوج المتصل. السلة والدفع والحسابات والشحن والطلبات وبقية وحدات المتجر تُنفّذ تدريجياً ولا تُعتبر مكتملة في هذا الإصدار.
+
+
+## Account security configuration
+
+Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` in the V-Storefront Render service to the public Cloudflare Turnstile site key. The matching private `TURNSTILE_SECRET_KEY` belongs only in V-Admin Render environment variables. Never expose the secret key in the storefront or GitHub.
