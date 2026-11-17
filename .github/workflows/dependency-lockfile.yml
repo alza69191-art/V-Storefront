@@ -36,7 +36,7 @@ jobs:
 
       - name: Commit generated lockfile and Next.js optional SWC entries
         run: |
-          if git diff --quiet -- package-lock.json; then
+          if [ -z "$(git status --porcelain -- package-lock.json)" ]; then
             echo "Lockfile is already current."
             exit 0
           fi
