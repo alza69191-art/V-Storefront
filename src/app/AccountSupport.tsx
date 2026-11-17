@@ -22,7 +22,8 @@ export default function AccountSupport({apiBase,initialOpen=false}:{apiBase:stri
  const base=apiBase.replace(/\/$/,"");
  const onTurnstileToken=useCallback((token:string)=>setTurnstileToken(token),[]);
  const onResendTurnstileToken=useCallback((token:string)=>setResendTurnstileToken(token),[]);
- const resetTurnstile=()=>{window.turnstile?.reset();setTurnstileToken("");setResendTurnstileToken("");};\n function notify(message:string){setToast(message);window.setTimeout(()=>setToast(""),4000); }
+ const resetTurnstile=()=>{window.turnstile?.reset();setTurnstileToken("");setResendTurnstileToken("");};
+ function notify(message:string){setToast(message);window.setTimeout(()=>setToast(""),4000); }
  async function refresh(){
   try{
    const r=await fetch(base+"/api/customer/auth",{credentials:"include",cache:"no-store"});const x=await r.json();setUser(x.user);
