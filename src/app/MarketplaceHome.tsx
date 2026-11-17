@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import AccountSupport from "./AccountSupport";
 const api=process.env.NEXT_PUBLIC_ADMIN_API_URL||"https://v-admin-api.onrender.com";
 const roles=[
@@ -17,7 +17,7 @@ export default function MarketplaceHome({config}:{config:any}){
  const [services,setServices]=useState<any[]>([]);
  const [loaded,setLoaded]=useState(false);
  async function load(){try{const [p,s]=await Promise.all([fetch(api+"/api/projects",{cache:"no-store"}),fetch(api+"/api/services",{cache:"no-store"})]);const pj=await p.json(),sv=await s.json();setProjects(pj.projects||[]);setServices(sv.services||[]);setLoaded(true);}catch{setLoaded(true);}}
- if(!loaded)void load();
+ useEffect(()=>{void load();},[]);
  const items=tab==="projects"?projects:services;
  const filtered=items.filter((x:any)=>(!query||String(x.title||"").toLowerCase().includes(query.toLowerCase())||String(x.description||"").toLowerCase().includes(query.toLowerCase()))&&(category==="الكل"||x.category===category));
  return <main className="marketplace">
