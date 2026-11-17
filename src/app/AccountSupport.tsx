@@ -1,7 +1,7 @@
 "use client";
 import {useCallback,useEffect,useRef,useState} from "react";
 type Ticket={id:number;subject:string;status:string;messages:{id:number;sender_type:string;body:string;created_at:string}[]};
-type CustomerOrder={id:number;order_number:string;status:string;currency:string;total:number;created_at:string;items:{id:number;title_snapshot:string;quantity:number;unit_price:number}[]};
+type CustomerOrder={id:number;order_number:string;status:string;currency:string;total:number;shipping_phone?:string|null;shipping_city?:string|null;shipping_address?:string|null;shipping_notes?:string|null;created_at:string;items:{id:number;title_snapshot:string;quantity:number;unit_price:number}[]};
 declare global { interface Window { turnstile?: {render:(el:HTMLElement,opts:any)=>string;reset:(id?:string)=>void}; } }
 function Turnstile({onToken}:{onToken:(token:string)=>void}){
  const ref=useRef<HTMLDivElement>(null);
